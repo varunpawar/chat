@@ -3,8 +3,11 @@ const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
 const formatMessage = require('./utils/messages');
+const upload = require('./utils/upload');
 const mongoose = require('mongoose');
 const fs = require('fs');
+const multer = require('multer');
+
 const {
   userJoin,
   getCurrentUser,
@@ -28,7 +31,12 @@ mongoose.connect('mongodb://localhost/chat', function(err) {
   }
 });
 
+app.get('/chat', (req, res) => {
 
+});
+app.post('/chat',(req, res) => {
+  console.log('post req');
+})
 
 var chatSchema = mongoose.Schema({
   username: String,
@@ -49,7 +57,7 @@ io.on('connection', socket => {
     if(err) console.log(err);
 
     socket.emit('load old msgs', docs);
-  });
+    });
 
     const user = userJoin(socket.id, username, room);
 
@@ -73,26 +81,32 @@ io.on('connection', socket => {
       users: getRoomUsers(user.room)
     });
 
+    socket.on('typing', function(username) {
+      socket.broadcast
+      .to(user.room)
+      .emit(
+        'typing',
+        username
+      );
+
+    });
+
   });
+ 
 
   // Listen for chatMessage
   socket.on('chatMessage', msg => {
     const user = getCurrentUser(socket.id);
-
     var newMsg = new savechat({ username: user.username, text: msg, room: user.room});
     newMsg.save(function(err){
       if(err) console.log(err);
 
-      io.to(user.room).emit('message', formatMessage(user.username, msg));
+      io.to(user.room).emit('message',  formatMessage(user.username, msg) );
     })
 
     
   });
 
-  // socket.on('img-chunk', chunk => {
-  //   const user = getCurrentUser(socket.id);
-  //   io.to(user.room).emit('receive-img', chunk);
-  // })
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
@@ -112,6 +126,11 @@ io.on('connection', socket => {
     }
   });
 });
+
+
+
+
+
 
 const PORT = process.env.PORT || 3000;
 
