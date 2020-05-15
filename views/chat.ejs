@@ -15,8 +15,8 @@
   <body>
     <div class="chat-container">
       <header class="chat-header">
-        <h1>ChatBoard</h1>
-        <a href="index.html" class="btn">Leave Room</a>
+        <h1>ChatBoarddddd</h1>
+        <a href="index" class="btn">Leave Room</a>
       </header>
       <main class="chat-main">
         <div class="chat-sidebar">
@@ -32,11 +32,12 @@
         <form id="chat-form" method="POST" action="chat.html">
           <input
             id="msg"
+            name="msg"
             type="text"
             placeholder="Enter Message"
             autocomplete="off"
           />
-          <input type="file" id="fileup" name="myfile" autocomplete="off" />
+          <a href="form.html">Upload media</a>
           <button class="btn" type="submit">Send</button>
         </form>
 
@@ -52,25 +53,6 @@
     ></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-
-<script>
-
-    $(document).ready(function(){
-
-        $('input[type="file"]').change(function(e){
-            var file = document.getElementById("fileup");
-            console.log(e.target.files[0]);
-            var fileName = e.target.files[0].name;
-
-            alert('The file "' + fileName +  '" has been selected.');
-
-
-
-        });
-
-    });
-
-</script>
     <script src="js/main.js"></script>
   </body>
 </html>

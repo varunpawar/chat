@@ -7,6 +7,7 @@ const upload = require('./utils/upload');
 const mongoose = require('mongoose');
 const fs = require('fs');
 const multer = require('multer');
+var bodyParser = require('body-parser');
 
 const {
   userJoin,
@@ -15,13 +16,22 @@ const {
   getRoomUsers
 } = require('./utils/users');
 
+var username="";
+var room="";
 const app = express();
-const server = http.createServer(app);
-const io = socketio(server);
 
-// Set static folder
+app.set('views', './views');
+app.set('view engine', 'ejs');
+
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+const server = http.createServer(app);
+const io = socketio(server);
 //connecting database
 mongoose.connect('mongodb://localhost/chat', function(err) {
   if(err){
@@ -31,12 +41,15 @@ mongoose.connect('mongodb://localhost/chat', function(err) {
   }
 });
 
-app.get('/chat', (req, res) => {
-
+app.get('/', (req, res) => {
+  res.render("index");
 });
-app.post('/chat',(req, res) => {
-  console.log('post req');
-})
+
+app.post('/chat', (req, res) => {
+  username=req.body.username;
+  room=req.body.room;
+  res.render("chat");
+});
 
 var chatSchema = mongoose.Schema({
   username: String,
@@ -48,10 +61,12 @@ var chatSchema = mongoose.Schema({
 var savechat = mongoose.model("Savechat", chatSchema);
 
 const botName = 'ChatBoard';
+var fileup = "";
 
 // Run when client connects
 io.on('connection', socket => {
-  socket.on('joinRoom', ({ username, room }) => {
+  console.log("new user connected");
+  socket.emit('joinRoom', ({ username, room }) => {
 
   savechat.find({room: room}, function(err, docs){
     if(err) console.log(err);
@@ -91,17 +106,20 @@ io.on('connection', socket => {
 
     });
 
-  });
- 
+ });
+ app.post('/upload', (req, res) => {
+  console.log("hello post");
+ })
 
   // Listen for chatMessage
-  socket.on('chatMessage', msg => {
+  socket.on('chatMessage', data => {
+  
     const user = getCurrentUser(socket.id);
-    var newMsg = new savechat({ username: user.username, text: msg, room: user.room});
+    var newMsg = new savechat({ username: user.username, text: data.msg, room: user.room});
     newMsg.save(function(err){
       if(err) console.log(err);
 
-      io.to(user.room).emit('message',  formatMessage(user.username, msg) );
+      io.to(user.room).emit('message',  formatMessage(user.username, data.msg) );
     })
 
     
@@ -128,10 +146,13 @@ io.on('connection', socket => {
 });
 
 
-
-
-
-
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
+
+
+
+
+

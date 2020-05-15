@@ -13,19 +13,16 @@ const roomName = document.getElementById('room-name');
 const userList = document.getElementById('users');
 const feedback = document.getElementById('feedback');
 
-// Get username and room from URL
-var username="";
-var room='';
 
+// Get username and room from URL
+const { username, room } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true
+});
 
 const socket = io();
 
 // Join chatroom
-socket.on('joinRoom', data => {
-  username=data.username;
-  room=data.room;
-  console.log(username);
-});
+socket.emit('joinRoom', { username, room });
 
 // Get room and users
 socket.on('roomUsers', ({ room, users }) => {
@@ -53,14 +50,13 @@ socket.on('typing', function(username) {
 })
 
 
-
 // Message submit
 chatForm.addEventListener('submit', e => {
   e.preventDefault();
   var file = document.getElementById('file');
   // Get message text
   var msg = e.target.elements.msg.value;
-
+  console.log(file);
   // Emit message to server
   socket.emit('chatMessage', {msg, file});
 
