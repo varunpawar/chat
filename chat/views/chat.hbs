@@ -15,13 +15,13 @@
   <body>
     <div class="chat-container">
       <header class="chat-header">
-        <h1>ChatBoarddddd</h1>
-        <a href="index" class="btn">Leave Room</a>
+        <h1>ChatBoard</h1>
+        <a href="/index" class="btn">Leave Room</a>
       </header>
       <main class="chat-main">
         <div class="chat-sidebar">
           <h3>Room Name:</h3>
-          <h2 id="room-name"></h2>
+          <h2 id="room-name">{{room}}</h2>
           <h3> Users</h3>
           <ul id="users"></ul>
         </div>
@@ -29,15 +29,15 @@
         <div id="feedback"></div>
       </main>
       <div class="chat-form-container">
-        <form id="chat-form" method="POST" action="chat.html">
+        <form id="chat-form" action="chat" method="POST" >
           <input
             id="msg"
-            name="msg"
             type="text"
+            name="message"
             placeholder="Enter Message"
             autocomplete="off"
           />
-          <a href="form.html">Upload media</a>
+          <input id="file" type="file" name="file" autocomplete="off" />
           <button class="btn" type="submit">Send</button>
         </form>
 
@@ -53,6 +53,25 @@
     ></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+
+<script>
+
+    // $(document).ready(function(){
+
+    //     $('input[type="file"]').change(function(e){
+    //         var file = document.getElementById("fileup");
+    //         console.log(e.target.files[0]);
+    //         var fileName = e.target.files[0].name;
+
+    //         alert('The file "' + fileName +  '" has been selected.');
+
+
+
+    //     });
+
+    // });
+
+</script>
     <script src="js/main.js"></script>
   </body>
 </html>

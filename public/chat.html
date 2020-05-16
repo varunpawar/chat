@@ -26,22 +26,19 @@
           <ul id="users"></ul>
         </div>
         <div class="chat-messages"></div>
-        <div id="feedback"></div>
       </main>
       <div class="chat-form-container">
-        <form id="chat-form" method="POST" action="chat.html">
+        <form id="chat-form">
           <input
             id="msg"
-            name="msg"
             type="text"
             placeholder="Enter Message"
+            required
             autocomplete="off"
           />
-          <a href="form">Upload</a>
-          <button class="btn" type="submit">Send</button>
+          <input type="file" id="file" value="Send file" autocomplete="off" />
+          <button class="btn">Send</button>
         </form>
-
-
         
       </div>
     </div>
@@ -52,26 +49,6 @@
       crossorigin="anonymous"
     ></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-
-<script>
-
-    // $(document).ready(function(){
-
-    //     $('input[type="file"]').change(function(e){
-    //         var file = document.getElementById("fileup");
-    //         console.log(e.target.files[0]);
-    //         var fileName = e.target.files[0].name;
-
-    //         alert('The file "' + fileName +  '" has been selected.');
-
-
-
-    //     });
-
-    // });
-
-</script>
     <script src="js/main.js"></script>
   </body>
 </html>

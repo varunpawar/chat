@@ -1,28 +1,28 @@
-//including jquery
-// var script = document.createElement('script');
-// script.src = 'https://code.jquery.com/jquery-3.4.1.min.js';
-// script.type = 'text/javascript';
-// document.getElementsByTagName('head')[0].appendChild(script);
-
-
-
-
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
 const userList = document.getElementById('users');
+const file = document.getElementById('file');
 const feedback = document.getElementById('feedback');
 
 
+
+
 // Get username and room from URL
-const { username, room } = Qs.parse(location.search, {
-  ignoreQueryPrefix: true
-});
+//const { username, room } = Qs.parse(location.search, {
+//  ignoreQueryPrefix: true
+//});
 
 const socket = io();
+var username="";
+var room="";
 
 // Join chatroom
-socket.emit('joinRoom', { username, room });
+socket.on('joinRoom', data => {
+  username=data.username;
+  room=data.room;
+  console.log(username);
+});
 
 // Get room and users
 socket.on('roomUsers', ({ room, users }) => {
@@ -39,26 +39,45 @@ socket.on('message', message => {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
-
-
 msg.addEventListener('keypress', function(){
-  socket.emit('typing', username);
+    
+    socket.emit('typing', username);
 });
 
 socket.on('typing', function(username) {
-  feedback.innerHTML = '<p><em>'+username+ ' is typing a message..</em></p>'
-})
+   feedback.innerHTML = '<p><em>'+username+ ' is typing a message..</em></p>';
+});
 
 
 // Message submit
 chatForm.addEventListener('submit', e => {
   e.preventDefault();
-  var file = document.getElementById('file');
+
+//   $('#file').change(function(e){
+//     var readStream = fs.createReadStream(path.resolve(__dirname, './green.jpg'), {
+//     encoding: 'binary'
+//   }), chunks = [];
+
+//   readStream.on('readable', function() {
+//     console.log('img loading');
+//   });
+
+//   readStream.on('data', function(chunk) {
+//     chunk.push(chunk);
+//     socket.emit('img-chunk', chunk);
+//   });
+
+//   readStream.on('end', function() {
+//     console.log('img uploaded');
+//   });
+
+// });
+
   // Get message text
-  var msg = e.target.elements.msg.value;
-  console.log(file);
+  const msg = e.target.elements.msg.value;
+
   // Emit message to server
-  socket.emit('chatMessage', {msg, file});
+  socket.emit('chatMessage', msg);
 
   // Clear input
   e.target.elements.msg.value = '';
@@ -73,7 +92,6 @@ socket.on('load old msgs', function(docs){
 
 // Output message to DOM
 function outputMessage(message) {
-  feedback.innerHTML = "";
   const div = document.createElement('div');
   div.classList.add('message'); //seting up the class
   div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>
